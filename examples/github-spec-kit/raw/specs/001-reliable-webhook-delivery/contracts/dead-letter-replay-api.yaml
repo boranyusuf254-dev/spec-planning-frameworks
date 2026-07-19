@@ -1,0 +1,139 @@
+openapi: 3.0.3
+info:
+  title: Dead-Letter & Replay API
+  version: "0.1.0"
+  description: >
+    Operator-facing surface for FR-008–FR-011 and User Story 2. This plan
+    treats "authorized operator" as satisfied by the same tenant-bound bearer
+    auth as the other contracts, plus an operator-role claim — spec.md's
+    Assumption leaves open whether tenant self-service replay is also
+    exposed; this contract does not foreclose that (the same endpoints work
+    for either caller class), it just doesn't decide the authorization-role
+    question, per research.md §10.
+servers:
+  - url: https://api.example.invalid/v1
+security:
+  - operatorAuth: []
+paths:
+  /dead-letters:
+    get:
+      summary: List dead-lettered deliveries for the caller's tenant
+      parameters:
+        - name: webhook_endpoint_id
+          in: query
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/DeadLetterSummary" }
+  /dead-letters/{deliveryId}:
+    parameters:
+      - name: deliveryId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      summary: >
+        Full dead-letter detail: payload (if not yet purged past retention,
+        research.md §8), target endpoint, and complete attempt history —
+        enough to diagnose why it failed (FR-008).
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DeadLetterDetail" }
+        "404":
+          description: Not found, not dead-lettered, or not owned by caller's tenant
+  /deliveries/{deliveryId}/replay:
+    parameters:
+      - name: deliveryId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    post:
+      summary: >
+        Trigger a replay of a dead-lettered or previously delivered event
+        (FR-009). Signed and idempotency-keyed identically to the original
+        (FR-010) — see data-model.md's Delivery Attempt (idempotency_key is
+        always copied from the parent Delivery, never regenerated).
+        Serialized against any in-flight automatic retry for the same
+        delivery (data-model.md Replay Request validation rule; spec.md
+        Edge Case on replay/retry races).
+      responses:
+        "202":
+          description: >
+            Replay accepted and scheduled. 202, not 200, because the outcome
+            is recorded asynchronously into the delivery's history (FR-011)
+            and is not yet known at response time.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ReplayRequest" }
+        "404":
+          description: Not found, not eligible for replay, or not owned by caller's tenant
+        "409":
+          description: >
+            A replay or automatic retry is already in flight for this
+            delivery (mutual-exclusion lock from data-model.md's Replay
+            Request validation rule) — retry the request after it resolves.
+        "422":
+          description: >
+            Payload no longer available — retention period has purged it
+            (research.md §8, spec.md Edge Case: replay after retention
+            expiry is an explicit error, not a silent no-op).
+components:
+  securitySchemes:
+    operatorAuth:
+      type: http
+      scheme: bearer
+      description: Tenant-bound bearer token with an operator-role claim.
+  schemas:
+    DeadLetterSummary:
+      type: object
+      properties:
+        delivery_id: { type: string, format: uuid }
+        webhook_endpoint_id: { type: string, format: uuid }
+        event_type: { type: string }
+        attempt_count: { type: integer }
+        dead_lettered_at: { type: string, format: date-time }
+    DeadLetterDetail:
+      allOf:
+        - $ref: "#/components/schemas/DeadLetterSummary"
+        - type: object
+          properties:
+            payload:
+              type: object
+              nullable: true
+              description: Null if purged past the retention window (research.md §8)
+            target_endpoint:
+              type: object
+              properties:
+                url: { type: string, format: uri }
+                status: { type: string, enum: [active, disabled] }
+            attempt_history:
+              type: array
+              items:
+                type: object
+                properties:
+                  attempt_number: { type: integer }
+                  kind: { type: string, enum: [original, retry, replay] }
+                  outcome:
+                    type: string
+                    enum: [success, retryable_failure, non_retryable_failure, timeout]
+                  attempted_at: { type: string, format: date-time }
+    ReplayRequest:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        delivery_id: { type: string, format: uuid }
+        requested_by: { type: string }
+        requested_at: { type: string, format: date-time }
+        resulting_attempt_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: Populated once the replay attempt executes

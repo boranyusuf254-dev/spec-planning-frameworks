@@ -1,0 +1,37 @@
+[
+  {
+    "slug": "superpowers-vs-gsd",
+    "left": "superpowers",
+    "right": "gsd",
+    "title": "Superpowers vs GSD",
+    "summary": "Superpowers centers a design-to-plan-to-execution skill sequence. GSD centers a persistent project ledger and phased roadmap that later agent sessions resume.",
+    "docsUrl": "https://docs.plannotator.ai/compare/superpowers-vs-gsd",
+    "recommendedFiles": {
+      "left": "docs/superpowers/specs/2026-07-19-reliable-webhook-delivery-design.md",
+      "right": ".planning/ROADMAP.md"
+    }
+  },
+  {
+    "slug": "github-spec-kit-vs-kiro-specs",
+    "left": "github-spec-kit",
+    "right": "kiro-specs",
+    "title": "GitHub Spec Kit vs Kiro Specs",
+    "summary": "Spec Kit produced a wide repository artifact tree with constitution checks and interface contracts. Kiro documents a tighter requirements-design-tasks chain, shown here only as a clearly labeled manual example.",
+    "docsUrl": "https://docs.plannotator.ai/compare/github-spec-kit-vs-kiro-specs",
+    "recommendedFiles": {
+      "left": "specs/001-reliable-webhook-delivery/spec.md",
+      "right": "requirements.md"
+    }
+  },
+  {
+    "slug": "matt-pocock-skills-vs-bmad-method",
+    "left": "matt-pocock-skills",
+    "right": "bmad-method",
+    "title": "Matt Pocock's skills vs BMad Method",
+    "summary": "Matt Pocock's flow uses a durable spec as the bridge to tracker tickets. BMad offers a much larger menu of role-based workflows plus a compact express technical-spec path.",
+    "recommendedFiles": {
+      "left": "specs/reliable-webhook-delivery.md",
+      "right": "_bmad-output/specs/spec-reliable-webhook-delivery/SPEC.md"
+    }
+  }
+]

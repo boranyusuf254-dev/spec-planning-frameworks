@@ -1,0 +1,131 @@
+openapi: 3.0.3
+info:
+  title: Delivery Audit Log API
+  version: "0.1.0"
+  description: >
+    Read surface for FR-012/FR-013 and User Story 3 — reconstructing a
+    delivery's full lifecycle (attempts, retries, dead-letter transitions,
+    replays) from the audit log. Tenant-scoped identically to
+    webhook-endpoints-api.yaml; a query for another tenant's delivery_id
+    returns 404, never a 403 that would confirm the ID's existence (FR-014,
+    spec.md User Story 3 acceptance scenario 2).
+servers:
+  - url: https://api.example.invalid/v1
+security:
+  - tenantAuth: []
+paths:
+  /deliveries:
+    get:
+      summary: List deliveries for the caller's tenant, optionally filtered
+      parameters:
+        - name: webhook_endpoint_id
+          in: query
+          schema: { type: string, format: uuid }
+        - name: state
+          in: query
+          schema:
+            type: string
+            enum: [pending, retrying, delivered, dead_lettered]
+        - name: event_id
+          in: query
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/DeliverySummary" }
+  /deliveries/{deliveryId}:
+    parameters:
+      - name: deliveryId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      summary: Get a single delivery's current state and attempt summary
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DeliveryDetail" }
+        "404":
+          description: Not found or not owned by caller's tenant
+  /deliveries/{deliveryId}/audit-log:
+    parameters:
+      - name: deliveryId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      summary: >
+        Full chronological audit trail for one delivery — every attempt,
+        retry_scheduled, dead_lettered, replay_triggered, and replay_outcome
+        entry (data-model.md Audit Log Entry), satisfying spec.md User Story
+        3 acceptance scenario 1 (order preserved, sufficient detail to
+        reconstruct history without consulting raw system internals).
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/AuditLogEntry" }
+        "404":
+          description: Not found or not owned by caller's tenant
+components:
+  securitySchemes:
+    tenantAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    DeliverySummary:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        event_id: { type: string, format: uuid }
+        webhook_endpoint_id: { type: string, format: uuid }
+        state:
+          type: string
+          enum: [pending, retrying, delivered, dead_lettered]
+        attempt_count: { type: integer }
+        last_attempted_at: { type: string, format: date-time, nullable: true }
+    DeliveryDetail:
+      allOf:
+        - $ref: "#/components/schemas/DeliverySummary"
+        - type: object
+          properties:
+            idempotency_key: { type: string }
+            next_attempt_at: { type: string, format: date-time, nullable: true }
+            attempts:
+              type: array
+              items: { $ref: "#/components/schemas/DeliveryAttempt" }
+    DeliveryAttempt:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        attempt_number: { type: integer }
+        kind: { type: string, enum: [original, retry, replay] }
+        outcome:
+          type: string
+          enum: [success, retryable_failure, non_retryable_failure, timeout]
+        http_status_code: { type: integer, nullable: true }
+        latency_ms: { type: integer, nullable: true }
+        attempted_at: { type: string, format: date-time }
+    AuditLogEntry:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        event_type:
+          type: string
+          enum: [attempt, retry_scheduled, dead_lettered, replay_triggered, replay_outcome]
+        detail:
+          type: object
+          description: Structured context — timestamp, outcome, target endpoint, attempt context (FR-012)
+        actor:
+          type: string
+          description: "system, or the operator identity who triggered a replay"
+        recorded_at: { type: string, format: date-time }

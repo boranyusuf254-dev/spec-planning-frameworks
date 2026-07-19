@@ -1,0 +1,144 @@
+openapi: 3.0.3
+info:
+  title: Webhook Endpoint Management API
+  version: "0.1.0"
+  description: >
+    Tenant-scoped CRUD for webhook endpoints and signing-secret rotation.
+    Every request is authenticated as a caller bound to exactly one tenant;
+    the API never accepts a tenant identifier as a request parameter — it is
+    always derived from the authenticated caller's session, per Principle VI
+    / FR-014 (data-model.md's Row-Level Security enforcement backs this at
+    the storage layer too, so this is defense in depth, not the only gate).
+servers:
+  - url: https://api.example.invalid/v1
+    description: Placeholder — cloud provider / concrete host is an open question (research.md §9)
+security:
+  - tenantAuth: []
+paths:
+  /webhook-endpoints:
+    get:
+      summary: List the caller's tenant's webhook endpoints
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WebhookEndpoint"
+    post:
+      summary: Register a new webhook endpoint for the caller's tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url, subscribed_event_types]
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  description: Must be https:// (data-model.md validation rule)
+                subscribed_event_types:
+                  type: array
+                  items: { type: string }
+                  minItems: 1
+      responses:
+        "201":
+          description: Created — response includes the initial active signing secret exactly once
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/WebhookEndpoint"
+                  - type: object
+                    properties:
+                      signing_secret:
+                        type: string
+                        description: Shown only on creation and on rotation; never retrievable afterward
+  /webhook-endpoints/{endpointId}:
+    parameters:
+      - name: endpointId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      summary: Get a single webhook endpoint (tenant-scoped; 404 if it belongs to another tenant)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/WebhookEndpoint" }
+        "404":
+          description: Not found or not owned by caller's tenant (FR-014 — no existence leak across tenants)
+    patch:
+      summary: Update endpoint URL, subscribed event types, or status (active/disabled)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url: { type: string, format: uri }
+                subscribed_event_types:
+                  type: array
+                  items: { type: string }
+                status: { type: string, enum: [active, disabled] }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/WebhookEndpoint" }
+        "404":
+          description: Not found or not owned by caller's tenant
+  /webhook-endpoints/{endpointId}/rotate-secret:
+    parameters:
+      - name: endpointId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    post:
+      summary: >
+        Rotate the endpoint's signing secret. The previous secret enters
+        grace_period rather than immediate revocation (data-model.md Signing
+        Secret entity), so in-flight retries signed before rotation remain
+        verifiable until the grace window elapses.
+      responses:
+        "200":
+          description: New secret issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signing_secret:
+                    type: string
+                    description: Shown only in this response — store it now
+                  grace_period_ends_at:
+                    type: string
+                    format: date-time
+        "404":
+          description: Not found or not owned by caller's tenant
+components:
+  securitySchemes:
+    tenantAuth:
+      type: http
+      scheme: bearer
+      description: Bearer token resolves to a single tenant-bound caller identity; no cross-tenant scope exists.
+  schemas:
+    WebhookEndpoint:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        url: { type: string, format: uri }
+        subscribed_event_types:
+          type: array
+          items: { type: string }
+        status: { type: string, enum: [active, disabled] }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
