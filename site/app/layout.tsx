@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { SiteHeader } from "../components/site-header";
 
@@ -37,7 +38,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script
+        <Script
+          id="theme-preference"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `try{const t=localStorage.getItem("spf-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch{}`,
           }}

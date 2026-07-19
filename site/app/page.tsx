@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Script from "next/script";
 import { canonicalUrl, content, origin } from "../lib/data";
 
 export const metadata: Metadata = {
@@ -29,7 +30,7 @@ export default function Home() {
 
   return (
     <main id="main-content">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(dataset) }} />
+      <Script id="comparison-dataset" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(dataset) }} />
       <section className="hero page-width">
         <p className="eyebrow">One brief · six real workflows</p>
         <h1>See what AI coding planning frameworks actually produce.</h1>
