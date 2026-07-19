@@ -7,7 +7,7 @@
 - Six framework profiles, 37 inspectable example files, and six provenance records complete.
 - Static site builds 54 routes under `site/out/`, including framework profiles, every deep file, three comparisons, the shared case, sitemap, robots, and 404.
 - Desktop and mobile layouts checked at 1440×1000 and 390×844 in light and dark themes.
-- Public GitHub repository creation and push remain the final release step for this build task.
+- Public repository published at `https://github.com/plannotator/spec-planning-frameworks`; `main` is pushed with a precise description and comparison/planning topics.
 
 ## Tool runs
 
