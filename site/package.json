@@ -1,0 +1,41 @@
+{
+  "name": "spec-planning-frameworks-site",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "sync-content": "node scripts/sync-content.mjs",
+    "predev": "npm run sync-content",
+    "dev": "next dev",
+    "prebuild": "npm run sync-content",
+    "build": "next build",
+    "test": "npm run build && node --test tests/rendered-html.test.mjs",
+    "prelint": "npm run sync-content",
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern content/generated.json --ignore-pattern public/raw",
+    "pretypecheck": "npm run sync-content",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "16.2.6",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.2.6",
+    "typescript": "5.9.3"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "8.5.10"
+    }
+  },
+  "type": "module"
+}
